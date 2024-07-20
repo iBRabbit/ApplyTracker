@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DynamicBox from "../../components/DynamicAuthForm";
+import DynamicBox from "../../components/forms/DynamicAuthForm";
 import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';

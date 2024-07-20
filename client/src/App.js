@@ -11,7 +11,7 @@ import ApplicationsAdd from './pages/applications/create';
 
 import { AuthProvider } from './helpers/AuthContext';
 
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/routes/ProtectedRoute';
 
 function App() {
   return (

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
-import DynamicForm from '../../components/DynamicForm'
+import DynamicForm from '../../components/forms/DynamicFormBox'
 
 function create() {
     return (
