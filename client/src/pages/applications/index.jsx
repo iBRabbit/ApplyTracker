@@ -4,36 +4,49 @@ import axios from '../../api/axiosConfig';
 
 function Index() {
   const [applications, setApplications] = useState([]);
-  const [loading, setLoading] = useState(true); // Menambahkan state untuk loading
-  const [error, setError] = useState(null); // Menambahkan state untuk error
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const response = await axios.get('/applications', {
+        const response = await axios.post('/applications/ByUid', {}, {
           headers: {
-            'token': `${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         });
+
         setApplications(response.data);
-        console.log(response.data)
+
       } catch (error) {
         setError(error.message);
       } finally {
-        setLoading(false); // Mengatur loading selesai setelah fetch
+        setLoading(false); 
       }
     };
 
     fetchApplications();
-  }, []); // Kosongkan array dependensi untuk hanya menjalankan efek saat mount
+  }, []); 
 
-  if (loading) return <p>Loading...</p>; // Tampilkan loading indicator
-  if (error) return <p>Error: {error}</p>; // Tampilkan pesan kesalahan jika ada
+
 
   return (
     <div>
       <h1 className='mt-5'>My Applications</h1>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error: {error}</p>}
+      {applications.length === 0 && <p>No applications found</p>}
+
       <div className='container'>
+        <div className='row'>
+          <div className='col-md-12'>
+            <button className='btn btn-primary mt-3'>Add Application</button>
+          </div>
+        </div>
+      </div>
+
+      {applications.length > 0 &&(
+        <div className='container'>
         <div className='row'>
           <Table responsive striped bordered hover className='mt-3'>
             <thead>
@@ -68,6 +81,7 @@ function Index() {
           </Table>
         </div>
       </div>
+      )}
     </div>
   );
 }
