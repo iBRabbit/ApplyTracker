@@ -11,8 +11,8 @@ router.get('/', validateToken, async (req, res) => {
     res.json(data);
 });
 
-router.post('/ByUid/', async (req, res) => {
-    const token = req.headers["authorization"].split(' ')[1];
+router.post('/ByUid/', validateToken, async (req, res) => {
+    const token = req.headers["token"]
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const data = await Applications.findAll({
         where: {
@@ -21,7 +21,19 @@ router.post('/ByUid/', async (req, res) => {
     });
 
     res.json(data);
+});
 
+router.delete('/:id', validateToken, async (req, res) => {
+    const id = req.params.id;
+    await Applications.destroy({
+        where: {
+            id: id
+        }
+    });
+
+    res.json({
+        message: `Application with id ${id} has been deleted`
+    });
 });
 
 module.exports = router;

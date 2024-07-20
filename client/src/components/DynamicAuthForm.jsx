@@ -27,7 +27,7 @@ const DynamicBox = ({ title, onSubmit, message, success}) => {
               <Form.Group controlId="email">
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="email" placeholder="Email" required />
-             </Form.Group>
+              </Form.Group>
             )}
 
             <Button variant="primary" type="submit" className="w-100 mt-3">

@@ -2,17 +2,42 @@ import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import axios from '../../api/axiosConfig';
 
+// navigaet
+import { useNavigate } from 'react-router-dom';
+
 function Index() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
+
+  const navigate = useNavigate();
+  
+  const addApplication = () => navigate('/applications/add');
+
+  const deleteApplication = (id) => {
+    axios
+      .delete(`/applications/${id}`, {
+        headers: {
+          'token': `${localStorage.getItem('token')}`,
+        }
+      })
+      .then(() => {
+        setApplications(applications.filter((application) => application.id !== id));
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }   
+  
+
+  const editApplication = (id) => navigate(`/applications/edit/${id}`);
 
   useEffect(() => {
     const fetchApplications = async () => {
       try {
         const response = await axios.post('/applications/ByUid', {}, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'token': `${localStorage.getItem('token')}`,
           }
         });
 
@@ -40,7 +65,7 @@ function Index() {
       <div className='container'>
         <div className='row'>
           <div className='col-md-12'>
-            <button className='btn btn-primary mt-3'>Add Application</button>
+            <button className='btn btn-primary mt-3' onClick={addApplication}>Add Application</button>
           </div>
         </div>
       </div>
@@ -72,8 +97,8 @@ function Index() {
                   <td>{application.date_followup ? new Date(application.date_followup).toLocaleDateString('id-ID') : '-'}</td>
                   <td>{application.notes}</td>
                   <td>
-                    <button className='btn btn-primary'>Edit</button>
-                    <button className='btn btn-danger'>Delete</button>
+                    <button className='btn btn-primary' onClick={() => editApplication(application.id)}>Edit</button>
+                    <button className='btn btn-danger' onClick={() => deleteApplication(application.id)}>Delete</button>
                   </td>
                 </tr>
               ))}

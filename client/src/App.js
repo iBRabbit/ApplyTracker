@@ -7,6 +7,8 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Applications from './pages/applications/index';
 
+import ApplicationsAdd from './pages/applications/create';
+
 import { AuthProvider } from './helpers/AuthContext';
 
 import ProtectedRoute from './components/ProtectedRoute';
@@ -23,7 +25,7 @@ function App() {
             <Route path="/register" element={<Register />} />
 
             <Route path="/applications" element={<ProtectedRoute element={<Applications />} />} />
-            
+            <Route path="/applications/add" element={<ProtectedRoute element={<ApplicationsAdd />} />} />
           </Routes>
         </Router>
       </AuthProvider>
