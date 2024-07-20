@@ -91,7 +91,9 @@ router.post('/login', async (req, res) => {
 
 router.get('/check', async (req, res) => {
     try {
-        const token = req.header('x-auth-token');
+        const token = req.header('token');
+        console.log(`token: ${token}`);
+
         if (!token) {
             return res.status(401).json({ message: 'No token, authorization denied' });
         }

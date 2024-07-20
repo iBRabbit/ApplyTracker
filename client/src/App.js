@@ -5,8 +5,9 @@ import { Helmet } from 'react-helmet';
 
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import { AuthProvider } from './helpers/AuthContext';
+import Applications from './pages/applications/index';
 
+import { AuthProvider } from './helpers/AuthContext';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/applications" element={<Applications />} />
           </Routes>
         </Router>
       </AuthProvider>
