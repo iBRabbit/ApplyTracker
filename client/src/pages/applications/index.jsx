@@ -275,7 +275,7 @@ function Index() {
                           label: 'Notes',
                           type: 'textarea',
                           placeholder: 'Enter notes',
-                          defaultValue: application.notes
+                          defaultValue: editingAppId.notes
                         },
                       ]}
                     />
