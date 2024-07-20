@@ -9,6 +9,8 @@ import Applications from './pages/applications/index';
 
 import { AuthProvider } from './helpers/AuthContext';
 
+import ProtectedRoute from './components/ProtectedRoute';
+
 function App() {
   return (
     <div className="App">
@@ -19,7 +21,9 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/applications" element={<Applications />} />
+
+            <Route path="/applications" element={<ProtectedRoute element={<Applications />} />} />
+            
           </Routes>
         </Router>
       </AuthProvider>
