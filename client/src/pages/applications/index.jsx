@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Alert, Table } from "react-bootstrap";
 import axios from "../../api/axiosConfig";
 
 import DynamicModalForm from "../../components/forms/DynamicModalForm";
@@ -19,10 +19,37 @@ function Index() {
 
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingAppId, setEditingAppId] = useState({});
+
+  const [statusOptions, setStatusOptions] = useState([]);
+
   const handleCloseEditForm = () => setShowEditForm(false);
   const handleShowEditForm = async (app) => {
     setShowEditForm(true);
     setEditingAppId(app);
+
+    try {
+      const response = await axios.post(`/statuses/${app.id}`, {
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+        },
+      });
+
+      setStatusOptions(response.data.map((status) => ({
+        id: status.id, 
+        name: status.status 
+      }))); 
+
+      console.log(statusOptions)
+    
+    } catch (error) {
+      setMessage({
+        type: "danger",
+        message: `Error: ${error.response.data.message}`,
+      });
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   const handleStatusChange = (newStatusFieldList) => setStatusFieldList(newStatusFieldList);
@@ -183,7 +210,7 @@ function Index() {
             placeholder: "Enter notes",
           },
         ]}
-        onStatusChange={handleStatusChange} // Pass the callback here
+        onStatusChange={handleStatusChange} 
       />
 
       <DynamicModalForm
@@ -215,11 +242,12 @@ function Index() {
           {
             id: "status",
             label: "Status",
-            type: "textlist",
+            type: "select",
+            options: statusOptions,
             statusFieldList: statusFieldList,
             setStatusFieldList: setStatusFieldList,
             placeholder: "Enter status (i.e : Applied,  HR Interview)",
-            defaultValue: editingAppId?.status,
+            defaultValue: ["Applied"],
           },
           {
             id: "date_applied",
@@ -242,7 +270,7 @@ function Index() {
             defaultValue: editingAppId?.notes,
           },
         ]}
-        onStatusChange={handleStatusChange} // Pass the callback here
+        onStatusChange={handleStatusChange} 
       />
 
       {applications.length > 0 && (
