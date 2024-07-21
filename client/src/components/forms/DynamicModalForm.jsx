@@ -5,7 +5,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 
 import Alert from 'react-bootstrap/Alert';
 
-function DynamicModalForm({ title, listForm, onSubmit, show, handleClose, message }) {
+function DynamicModalForm({ title, listForm, onSubmit, show, handleClose, message, onStatusChange }) {
   return (
     <div>
       <Modal show={show} onHide={handleClose}>
@@ -20,6 +20,7 @@ function DynamicModalForm({ title, listForm, onSubmit, show, handleClose, messag
             title={title}
             listForm={listForm}
             onSubmit={onSubmit}
+            onStatusChange={onStatusChange}
           />
         </Modal.Body>
       </Modal>
