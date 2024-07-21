@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { Applications } = require('../models');
+const { Applications, Statuses } = require('../models');
+
 const { validateToken } = require('../middlewares/AuthMiddleware');
 
 const jwt = require('jsonwebtoken');
@@ -46,8 +47,22 @@ router.post('/', validateToken, async (req, res) => {
         "date_applied": date_applied
     };
 
-    const application = await Applications.create(data);
-    res.json(application);
+    try {
+        const application = await Applications.create(data);
+
+        status.forEach(async element => {
+            const statusData = {
+                "application_id": application.id,
+                "status": element
+            };
+            await Statuses.create(statusData);
+        });
+
+        res.json(application);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+
 });
 
 router.post('/ByUid/', validateToken, async (req, res) => {

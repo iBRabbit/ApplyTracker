@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const Statuses = sequelize.define('Statuses', {
-        applications_id : {
+        application_id : {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
         status: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
         },
     });
 
