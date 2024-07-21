@@ -41,7 +41,6 @@ router.post('/', validateToken, async (req, res) => {
         "user_id": user_id,
         "company": company_name,
         "position": position,
-        "status": status,
         "notes": notes,
         "date_followup": null,
         "date_applied": date_applied
@@ -73,6 +72,15 @@ router.post('/ByUid/', validateToken, async (req, res) => {
             user_id: decoded.id
         }
     });
+    
+    for(let i = 0; i < data.length; i++) {
+        const statuses = await Statuses.findAll({
+            where: {
+                id: data[i].dataValues.status
+            }
+        });
+        data[i].dataValues.status_name = statuses[0].dataValues.status;
+    }
 
     res.json(data);
 });
@@ -138,6 +146,15 @@ router.put('/:id', validateToken, async (req, res) => {
             user_id: decoded.id
         }
     });
+
+    for(let i = 0; i < apps.length; i++) {
+        const statuses = await Statuses.findAll({
+            where: {
+                id: apps[i].dataValues.status
+            }
+        });
+        apps[i].dataValues.status_name = statuses[0].dataValues.status;
+    }
 
     res.json(apps);
 });

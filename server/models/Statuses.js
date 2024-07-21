@@ -15,7 +15,12 @@ module.exports = (sequelize, DataTypes) => {
         },
     });
 
-
+    Statuses.associate = models => {
+        Statuses.belongsTo(models.Applications, {
+            foreignKey: 'application_id',
+            onDelete: 'cascade'
+        });
+    }
 
     return Statuses;
 }

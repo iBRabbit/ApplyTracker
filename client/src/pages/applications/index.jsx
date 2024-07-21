@@ -295,7 +295,7 @@ function Index() {
                     <td>{i + 1}</td>
                     <td>{application.company}</td>
                     <td>{application.position}</td>
-                    <td>{application.status}</td>
+                    <td>{application.status_name}</td>
                     <td>{formatDate(application.date_applied)}</td>
                     <td>{application.date_followup ? formatDate(application.date_followup) : "No Update"}</td>
                     <td>{application.notes}</td>
