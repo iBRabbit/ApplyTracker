@@ -2,7 +2,13 @@ module.exports = (sequelize, DataTypes) => {
     const Applications = sequelize.define('Applications', {
         user_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: 'Users',
+                key: 'id'
+            },
+            onDelete: 'cascade'
+
         },
         position : {
             type: DataTypes.STRING,
@@ -29,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         }
     });
+
 
     return Applications;
 };
