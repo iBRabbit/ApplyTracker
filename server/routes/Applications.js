@@ -160,7 +160,12 @@ router.put('/:id', validateToken, async (req, res) => {
                 id: apps[i].dataValues.status
             }
         });
-        apps[i].dataValues.status_name = statuses[0].dataValues.status;
+
+        try {
+            apps[i].dataValues.status_name = statuses[0].dataValues.status;
+        } catch (error) {
+            apps[i].dataValues.status_name = "No Status";
+        }
     }
 
     res.json(apps);
