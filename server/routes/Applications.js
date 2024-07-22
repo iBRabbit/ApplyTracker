@@ -56,6 +56,8 @@ router.post('/', validateToken, async (req, res) => {
             };
             await Statuses.create(statusData);
         });
+        
+        application.dataValues.status_name = "No Status";
 
         res.json(application);
     } catch (error) {
@@ -79,7 +81,12 @@ router.post('/ByUid/', validateToken, async (req, res) => {
                 id: data[i].dataValues.status
             }
         });
-        data[i].dataValues.status_name = statuses[0].dataValues.status;
+        
+        try {
+            data[i].dataValues.status_name = statuses[0].dataValues.status;
+        } catch (error) {
+            data[i].dataValues.status_name = "No Status";
+        } 
     }
 
     res.json(data);

@@ -20,7 +20,7 @@ function DynamicForm({ title, listForm, onSubmit, onStatusChange }) {
       e.preventDefault();
       const newStatusFieldList = [...statusFieldList, e.target.value];
       setstatusFieldList(newStatusFieldList);
-      onStatusChange(newStatusFieldList); // Kirim perubahan ke index.jsx
+      onStatusChange(newStatusFieldList); 
       e.target.value = "";
     }
   };
@@ -29,7 +29,7 @@ function DynamicForm({ title, listForm, onSubmit, onStatusChange }) {
     const newstatusFieldList = [...statusFieldList];
     newstatusFieldList.splice(index, 1);
     setstatusFieldList(newstatusFieldList);
-    onStatusChange(newstatusFieldList); // Kirim perubahan ke index.jsx
+    onStatusChange(newstatusFieldList);
   };
 
   return (
@@ -54,7 +54,7 @@ function DynamicForm({ title, listForm, onSubmit, onStatusChange }) {
                 ) : form.type === "textarea" ? (
                   <Form.Control as="textarea" rows={form.rows || 3} placeholder={form.placeholder} required={form.required} defaultValue={form.defaultValue} />
                 )
-                 : form.type === "textlist" ? (
+                  : form.type === "textlist" ? (
                   <>
                     <div>
                       <FieldList fieldList={statusFieldList} remove={removeStatus} />
