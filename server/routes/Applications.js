@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { Applications } = require('../models');
+const { Applications, Statuses } = require('../models');
+
 const { validateToken } = require('../middlewares/AuthMiddleware');
 
 const jwt = require('jsonwebtoken');
@@ -40,14 +41,29 @@ router.post('/', validateToken, async (req, res) => {
         "user_id": user_id,
         "company": company_name,
         "position": position,
-        "status": status,
         "notes": notes,
         "date_followup": null,
         "date_applied": date_applied
     };
 
-    const application = await Applications.create(data);
-    res.json(application);
+    try {
+        const application = await Applications.create(data);
+
+        status.forEach(async element => {
+            const statusData = {
+                "application_id": application.id,
+                "status": element
+            };
+            await Statuses.create(statusData);
+        });
+        
+        application.dataValues.status_name = "No Status";
+
+        res.json(application);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+
 });
 
 router.post('/ByUid/', validateToken, async (req, res) => {
@@ -58,6 +74,20 @@ router.post('/ByUid/', validateToken, async (req, res) => {
             user_id: decoded.id
         }
     });
+    
+    for(let i = 0; i < data.length; i++) {
+        const statuses = await Statuses.findAll({
+            where: {
+                id: data[i].dataValues.status
+            }
+        });
+        
+        try {
+            data[i].dataValues.status_name = statuses[0].dataValues.status;
+        } catch (error) {
+            data[i].dataValues.status_name = "No Status";
+        } 
+    }
 
     res.json(data);
 });
@@ -124,7 +154,50 @@ router.put('/:id', validateToken, async (req, res) => {
         }
     });
 
+    for(let i = 0; i < apps.length; i++) {
+        const statuses = await Statuses.findAll({
+            where: {
+                id: apps[i].dataValues.status
+            }
+        });
+
+        try {
+            apps[i].dataValues.status_name = statuses[0].dataValues.status;
+        } catch (error) {
+            apps[i].dataValues.status_name = "No Status";
+        }
+    }
+
     res.json(apps);
 });
+
+router.put('/status/:id', validateToken, async (req, res) => {
+    const appID = req.params.id;
+
+    const {
+        statuses
+    } = req.body;
+
+    await Statuses.destroy({
+        where: {
+            application_id: appID
+        }
+    });
+
+    statuses.forEach(async element => {
+        const statusData = {
+            "application_id": appID,
+            "status": element
+        };
+        await Statuses.create(statusData);
+    });
+
+
+    return res.json({
+        message: "Edit Application"
+    });
+});
+
+
 
 module.exports = router;

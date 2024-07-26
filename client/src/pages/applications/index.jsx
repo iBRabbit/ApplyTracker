@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Alert, Table } from "react-bootstrap";
 import axios from "../../api/axiosConfig";
-
 
 import DynamicModalForm from "../../components/forms/DynamicModalForm";
 import Loading from "../../components/Loading";
@@ -12,21 +11,80 @@ function Index() {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState({});
 
+  const [statusFieldList, setStatusFieldList] = useState([]);
+  const [editStatusFieldList, setEditStatusFieldList] = useState([]);
+
   const [showAppForm, setShowAppForm] = useState(false);
   const handleCloseAppForm = () => setShowAppForm(false);
   const handleShowAppForm = () => setShowAppForm(true);
 
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingAppId, setEditingAppId] = useState({});
-  const handleCloseEditForm = () => setShowEditForm(false);
+
+  const [statusOptions, setStatusOptions] = useState([]);
+
+  const handleCloseEditForm = () => {
+    setShowEditForm(false);
+    setEditStatusFieldList([]);
+  };
+
   const handleShowEditForm = async (app) => {
     setShowEditForm(true);
     setEditingAppId(app);
+
+    try {
+      const response = await axios.post(`/statuses/${app.id}`, {
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+        },
+      });
+
+      const statusData = response.data.map((status) => ({
+        id: status.id, 
+        name: status.status 
+      }));
+      setStatusOptions(statusData);
+      setEditStatusFieldList(statusData.map((status) => status.name)); 
+
+    } catch (error) {
+      setMessage({
+        type: "danger",
+        message: `Error: ${error.response.data.message}`,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = (newStatusFieldList) => setStatusFieldList(newStatusFieldList);
+  const handleEditStatusChange = (newEditStatusFieldList) => {
+    setEditStatusFieldList(newEditStatusFieldList);
+    setStatusOptions(newEditStatusFieldList.map((status) => ({ id: status, name: status })));
+
+    try {
+      // alert(editingAppId.id);
+      const data = {
+        statuses: newEditStatusFieldList,
+      }
+
+      const response = axios.put(`/applications/status/${editingAppId.id}`, data, {
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+        },
+      });
+      
+    } catch (error) {
+      setMessage({
+        type: "danger",
+        message: `Error: ${error.response.data.message}`,
+      });
+    }
+
   }
 
   const formatDate = (date) => {
     const d = new Date(date);
-    return isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0];
+    return isNaN(d.getTime()) ? "" : d.toISOString().split("T")[0];
   };
 
   const addApplications = async (e) => {
@@ -34,11 +92,11 @@ function Index() {
     const data = {
       company_name: e.target.elements.company_name.value,
       position: e.target.elements.position.value,
-      status: e.target.elements.status.value,
+      status: statusFieldList,
       date_applied: e.target.elements.date_applied.value,
       notes: e.target.elements.notes.value,
     };
-    
+
     try {
       const response = await axios.post("/applications", data, {
         headers: {
@@ -48,14 +106,13 @@ function Index() {
 
       setApplications([...applications, response.data]);
       handleCloseAppForm();
-
     } catch (error) {
       setMessage({
         type: "danger",
         message: `Error: ${error.response.data.message}`,
       });
     }
-  }
+  };
 
   const deleteApplication = (id) => {
     axios
@@ -79,6 +136,7 @@ function Index() {
       company_name: e.target.elements.company_name.value,
       position: e.target.elements.position.value,
       status: e.target.elements.status.value,
+      statusEdit: editStatusFieldList,
       date_applied: e.target.elements.date_applied.value,
       date_followup: e.target.elements.date_followup.value,
       notes: e.target.elements.notes.value,
@@ -90,17 +148,16 @@ function Index() {
           token: `${localStorage.getItem("token")}`,
         },
       });
-      
+
       setApplications(response.data);
       handleCloseEditForm();
-
     } catch (error) {
       setMessage({
         type: "danger",
         message: `Error: ${error.response.data.message}`,
       });
     }
-  }
+  };
   useEffect(() => {
     const fetchApplications = async () => {
       try {
@@ -150,143 +207,147 @@ function Index() {
         message={message}
         listForm={[
           {
-            id: 'company_name',
-            label: 'Company Name',
-            type: 'text',
-            placeholder: 'Enter company name'
+            id: "company_name",
+            label: "Company Name",
+            type: "text",
+            placeholder: "Enter company name",
           },
           {
-            id: 'position',
-            label: 'Position',
-            type: 'text',
-            placeholder: 'Enter position'
+            id: "position",
+            label: "Position",
+            type: "text",
+            placeholder: "Enter position",
           },
           {
-            id: 'status',
-            label: 'Status',
-            type: 'select',
-            options: ['Applied', 'Online Test', 'HR Interview', 'User Interview', 'Rejected'],
-            placeholder: 'Enter status'
+            id: "status",
+            label: "Status",
+            type: "textlist",
+            statusFieldList: statusFieldList,
+            setStatusFieldList: setStatusFieldList,
+            placeholder: "Enter status (i.e : Applied,  HR Interview)",
           },
           {
-            id: 'date_applied',
-            label: 'Date Applied',
-            type: 'date',
-            placeholder: 'Enter date applied'
+            id: "date_applied",
+            label: "Date Applied",
+            type: "date",
+            defaultValue: formatDate(new Date()),
           },
           {
-            id: 'notes',
-            label: 'Notes',
-            type: 'textarea',
-            placeholder: 'Enter notes'
+            id: "notes",
+            label: "Notes",
+            type: "textarea",
+            placeholder: "Enter notes",
           },
         ]}
+        onStatusChange={handleStatusChange} 
+      />
+
+      <DynamicModalForm
+        show={showEditForm}
+        handleClose={handleCloseEditForm}
+        title="Edit Application"
+        onSubmit={editApplication}
+        message={message}
+        listForm={[
+          {
+            id: "id",
+            type: "hidden",
+            defaultValue: editingAppId?.id,
+          },
+          {
+            id: "company_name",
+            label: "Company Name",
+            type: "text",
+            placeholder: "Enter company name",
+            defaultValue: editingAppId?.company,
+          },
+          {
+            id: "position",
+            label: "Position",
+            type: "text",
+            placeholder: "Enter position",
+            defaultValue: editingAppId?.position,
+          },
+          {
+            id: "status",
+            label: "Status",
+            type: "select",
+            options: statusOptions,
+            placeholder: "Enter status (i.e : Applied,  HR Interview)",
+            defaultValue: editingAppId?.status,
+          },
+          {
+            id: "statusEdit",
+            label: "Edit Statuses",
+            type: "textlist",
+            placeholder: "Enter status (i.e : Applied,  HR Interview)",
+            defaultValue: editStatusFieldList,
+            setStatusFieldList: setEditStatusFieldList,
+          },
+          {
+            id: "date_applied",
+            label: "Date Applied",
+            type: "date",
+            defaultValue: formatDate(editingAppId?.date_applied),
+          },
+          {
+            id: 'date_followup',
+            label: 'Date Follow Up',
+            type: 'date',
+            placeholder: 'Enter date follow up',
+            defaultValue: new Date().toISOString().split('T')[0]
+          },
+          {
+            id: "notes",
+            label: "Notes",
+            type: "textarea",
+            placeholder: "Enter notes",
+            defaultValue: editingAppId?.notes,
+          },
+        ]}
+        onStatusChange={handleEditStatusChange} 
       />
 
       {applications.length > 0 && (
         <div className="container">
           <div className="row">
-            <Table responsive striped bordered hover className="mt-3">
+            <Table striped bordered hover responsive className="mt-3">
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Company Name</th>
                   <th>Position</th>
-                  <th>Company</th>
                   <th>Status</th>
                   <th>Date Applied</th>
-                  <th>Date Follow Up</th>
+                  <th>Date Followup</th>
                   <th>Notes</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {applications.map((application, index) => (
+                {applications.map((application, i) => (
                   <tr key={application.id}>
-                    <td>{index + 1}</td>
-                    <td>{application.position}</td>
+                    <td>{i + 1}</td>
                     <td>{application.company}</td>
-                    <td>{application.status}</td>
-                    <td>{new Date(application.date_applied).toLocaleDateString("id-ID")}</td>
-                    <td>{application.date_followup ? new Date(application.date_followup).toLocaleDateString("id-ID") : "-"}</td>
-                    <td style={{ maxWidth: '20vw', wordWrap: 'break-word', whiteSpace: 'normal' }}>
-                      {application.notes}
-                    </td>
+                    <td>{application.position}</td>
+                    <td>{application.status_name}</td>
+                    <td>{formatDate(application.date_applied)}</td>
+                    <td>{application.date_followup ? formatDate(application.date_followup) : "No Update"}</td>
+                    <td>{application.notes}</td>
                     <td>
-                      <button className="btn btn-primary me-4" onClick={() => handleShowEditForm(application)}>
-                        Update
+                      <button className="btn btn-primary me-2" onClick={() => handleShowEditForm(application)}>
+                        Edit
                       </button>
                       <button className="btn btn-danger" onClick={() => deleteApplication(application.id)}>
                         Delete
                       </button>
                     </td>
-
-                    <DynamicModalForm 
-                      show={showEditForm}
-                      handleClose={handleCloseEditForm}
-                      title={`Update for ${editingAppId.company} - ${application.position}`}
-                      onSubmit={editApplication}
-                      message={message}
-                      initialValues={application}
-                      listForm={[
-                        {
-                          id: 'id',
-                          label: '',
-                          type: 'hidden',
-                          defaultValue: editingAppId.id
-                        },
-                        {
-                          id: 'company_name',
-                          label: 'Company Name',
-                          type: 'text',
-                          placeholder: 'Enter company name',
-                          defaultValue: editingAppId.company
-                        },
-                        {
-                          id: 'position',
-                          label: 'Position',
-                          type: 'text',
-                          placeholder: 'Enter position',
-                          defaultValue: editingAppId.position
-                        },
-                        {
-                          id: 'status',
-                          label: 'Status',
-                          type: 'select',
-                          options: ['Applied', 'Online Test', 'HR Interview', 'User Interview', 'Rejected'],
-                          placeholder: 'Enter status',
-                          defaultValue: application.status
-                        },
-                        {
-                          id: 'date_applied',
-                          label: 'Date Applied',
-                          type: 'date',
-                          placeholder: 'Enter date applied',
-                          defaultValue: formatDate(editingAppId.date_applied)
-                        },
-                        {
-                          id: 'date_followup',
-                          label: 'Date Follow Up',
-                          type: 'date',
-                          placeholder: 'Enter date follow up',
-                          defaultValue: editingAppId.date_followup ? formatDate(editingAppId.date_followup) : ''
-                        },
-                        {
-                          id: 'notes',
-                          label: 'Notes',
-                          type: 'textarea',
-                          placeholder: 'Enter notes',
-                          defaultValue: editingAppId.notes
-                        },
-                      ]}
-                    />
-                  </tr>                  
+                  </tr>
                 ))}
               </tbody>
             </Table>
           </div>
-
         </div>
-
       )}
     </div>
   );

@@ -2,13 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const Applications = sequelize.define('Applications', {
         user_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: 'Users',
-                key: 'id'
-            },
-            onDelete: 'cascade'
-
+            allowNull: false
         },
         position : {
             type: DataTypes.STRING,
@@ -19,8 +13,9 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         status : {
-            type: DataTypes.STRING,
-            allowNull: false
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: -1
         },
         date_applied : {
             type: DataTypes.DATE,
@@ -36,6 +31,18 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
+    Applications.associate = models => {
+        Applications.belongsTo(models.Users, {
+            foreignKey: 'user_id',
+            onDelete: 'cascade'
+        });
+
+        Applications.hasMany(models.Statuses, {
+            foreignKey: 'application_id',
+            onDelete: 'cascade'
+        });
+        
+    };
 
     return Applications;
 };

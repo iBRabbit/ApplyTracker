@@ -16,6 +16,9 @@ app.use("/auth", usersRouter);
 const applicationsRouter = require('./routes/Applications');
 app.use("/applications", applicationsRouter);
 
+const statusesRouter = require('./routes/Statuses');
+app.use("/statuses", statusesRouter);
+
 db.sequelize.sync().then(() => {
     app.listen(port, () => {
         console.clear();
