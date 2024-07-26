@@ -295,7 +295,7 @@ function Index() {
             label: 'Date Follow Up',
             type: 'date',
             placeholder: 'Enter date follow up',
-            defaultValue: editingAppId.date_followup ? formatDate(editingAppId.date_followup) : new Date().toISOString().split('T')[0]
+            defaultValue: new Date().toISOString().split('T')[0]
           },
           {
             id: "notes",
