@@ -2,19 +2,6 @@ import React from "react";
 import { Form, Button } from "react-bootstrap";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-const FieldList = ({ fieldList = [], remove }) => (
-  <>
-    {fieldList.map((field, index) => (
-      <div key={index} className="d-flex align-items-center">
-        <span>{field}</span>
-        <Button variant="danger" size="sm" onClick={() => remove(index)}>
-          &times;
-        </Button>
-      </div>
-    ))}
-  </>
-);
-
 function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
   const [statusFieldList, setstatusFieldList] = React.useState([]);
 
@@ -42,7 +29,7 @@ function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
       setstatusFieldList(newStatusFieldList);
       onStatusChange(newStatusFieldList);
       e.target.value = "";
-      
+
     }
   };
 

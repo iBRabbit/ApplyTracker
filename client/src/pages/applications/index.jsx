@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import axios from "../../api/axiosConfig";
 
 import DynamicModalForm from "../../components/forms/DynamicModalForm";
@@ -57,7 +57,7 @@ function Index() {
   };
 
   const handleStatusChange = (newStatusFieldList) => setStatusFieldList(newStatusFieldList);
-  
+
   const handleEditStatusChange = (newEditStatusFieldList) => {
     setEditStatusFieldList(newEditStatusFieldList);
     setStatusOptions(newEditStatusFieldList.map((status) => ({ id: status, name: status })));
@@ -67,7 +67,7 @@ function Index() {
         statuses: newEditStatusFieldList,
       }
 
-      const response = axios.put(`/applications/status/${editingAppId.id}`, data, {
+      axios.put(`/applications/status/${editingAppId.id}`, data, {
         headers: {
           token: `${localStorage.getItem("token")}`,
         },
