@@ -2,31 +2,6 @@ import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
 function FieldList({ fieldList, remove }) {
-    const colors = [
-        "salmon",
-        "lightblue",
-        "lightgreen",
-        "lightcoral",
-        "lightseagreen",
-        "lightsteelblue",
-        "lightsalmon",
-        "lightyellow",
-        "lightpink",
-        "lightcyan",
-        "lightgoldenrodyellow",
-        "lightgray"
-    ];
-    const [color, setColor] = useState('');
-    const [count, setCount] = useState(0);
-
-    const changeColor = () => {
-        setColor(colors[count]);
-        setCount(count + 1);
-        if (count === colors.length - 1) {
-            setCount(0);
-        }
-    }
-
     return (
         <div>
             {fieldList.map((field, index) => (
