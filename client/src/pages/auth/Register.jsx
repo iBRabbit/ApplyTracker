@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import DynamicBox from "../../components/forms/DynamicAuthForm";
-import axios from 'axios';
 import { Helmet } from 'react-helmet';
 
 import axiosInstance from "../../api/axiosConfig";

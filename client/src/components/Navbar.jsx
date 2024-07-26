@@ -14,7 +14,7 @@ const AppNavbar = () => {
   };
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="p-3">
+    <Navbar bg="primary" variant="dark" expand="lg" className="p-3">
       <Navbar.Brand as={Link} to="/">Apply Tracker</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">

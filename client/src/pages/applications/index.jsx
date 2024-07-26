@@ -4,6 +4,7 @@ import axios from "../../api/axiosConfig";
 
 import DynamicModalForm from "../../components/forms/DynamicModalForm";
 import Loading from "../../components/Loading";
+import { Helmet } from "react-helmet";
 
 function Index() {
   const [applications, setApplications] = useState([]);
@@ -309,6 +310,7 @@ function Index() {
 
       {applications.length > 0 && (
         <div className="container">
+          <Helmet><title>My Applications</title></Helmet>
           <div className="row">
             <Table striped bordered hover responsive className="mt-3">
               <thead>
