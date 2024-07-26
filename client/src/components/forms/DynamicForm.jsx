@@ -5,6 +5,13 @@ import FieldList from "./FieldList";
 function DynamicForm({ title, listForm, onSubmit, onStatusChange }) {
   const [statusFieldList, setstatusFieldList] = React.useState([]);
 
+  React.useEffect(() => {
+    const statusField = listForm.find((form) => form.type === "textlist");
+    if (statusField) {}
+      setstatusFieldList(statusField.defaultValue);
+
+  }, [listForm]);
+
   const onFormChange = (e) => {
     if (e.key === "Enter") {
       if (e.target.value === "") {

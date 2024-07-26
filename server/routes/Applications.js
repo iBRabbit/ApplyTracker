@@ -171,4 +171,33 @@ router.put('/:id', validateToken, async (req, res) => {
     res.json(apps);
 });
 
+router.put('/status/:id', validateToken, async (req, res) => {
+    const appID = req.params.id;
+
+    const {
+        statuses
+    } = req.body;
+
+    await Statuses.destroy({
+        where: {
+            application_id: appID
+        }
+    });
+
+    statuses.forEach(async element => {
+        const statusData = {
+            "application_id": appID,
+            "status": element
+        };
+        await Statuses.create(statusData);
+    });
+
+
+    return res.json({
+        message: "Edit Application"
+    });
+});
+
+
+
 module.exports = router;

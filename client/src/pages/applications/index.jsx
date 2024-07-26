@@ -12,6 +12,7 @@ function Index() {
   const [message, setMessage] = useState({});
 
   const [statusFieldList, setStatusFieldList] = useState([]);
+  const [editStatusFieldList, setEditStatusFieldList] = useState([]);
 
   const [showAppForm, setShowAppForm] = useState(false);
   const handleCloseAppForm = () => setShowAppForm(false);
@@ -22,7 +23,11 @@ function Index() {
 
   const [statusOptions, setStatusOptions] = useState([]);
 
-  const handleCloseEditForm = () => setShowEditForm(false);
+  const handleCloseEditForm = () => {
+    setShowEditForm(false);
+    setEditStatusFieldList([]);
+  };
+
   const handleShowEditForm = async (app) => {
     setShowEditForm(true);
     setEditingAppId(app);
@@ -34,13 +39,13 @@ function Index() {
         },
       });
 
-      setStatusOptions(response.data.map((status) => ({
+      const statusData = response.data.map((status) => ({
         id: status.id, 
         name: status.status 
-      }))); 
+      }));
+      setStatusOptions(statusData);
+      setEditStatusFieldList(statusData.map((status) => status.name)); 
 
-      console.log(statusOptions)
-    
     } catch (error) {
       setMessage({
         type: "danger",
@@ -49,10 +54,33 @@ function Index() {
     } finally {
       setLoading(false);
     }
-
   };
 
   const handleStatusChange = (newStatusFieldList) => setStatusFieldList(newStatusFieldList);
+  const handleEditStatusChange = (newEditStatusFieldList) => {
+    setEditStatusFieldList(newEditStatusFieldList);
+    setStatusOptions(newEditStatusFieldList.map((status) => ({ id: status, name: status })));
+
+    try {
+      // alert(editingAppId.id);
+      const data = {
+        statuses: newEditStatusFieldList,
+      }
+
+      const response = axios.put(`/applications/status/${editingAppId.id}`, data, {
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+        },
+      });
+      
+    } catch (error) {
+      setMessage({
+        type: "danger",
+        message: `Error: ${error.response.data.message}`,
+      });
+    }
+
+  }
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -108,6 +136,7 @@ function Index() {
       company_name: e.target.elements.company_name.value,
       position: e.target.elements.position.value,
       status: e.target.elements.status.value,
+      statusEdit: editStatusFieldList,
       date_applied: e.target.elements.date_applied.value,
       date_followup: e.target.elements.date_followup.value,
       notes: e.target.elements.notes.value,
@@ -244,10 +273,16 @@ function Index() {
             label: "Status",
             type: "select",
             options: statusOptions,
-            statusFieldList: statusFieldList,
-            setStatusFieldList: setStatusFieldList,
             placeholder: "Enter status (i.e : Applied,  HR Interview)",
-            defaultValue: ["Applied"],
+            defaultValue: editingAppId?.status,
+          },
+          {
+            id: "statusEdit",
+            label: "Edit Statuses",
+            type: "textlist",
+            placeholder: "Enter status (i.e : Applied,  HR Interview)",
+            defaultValue: editStatusFieldList,
+            setStatusFieldList: setEditStatusFieldList,
           },
           {
             id: "date_applied",
@@ -270,7 +305,7 @@ function Index() {
             defaultValue: editingAppId?.notes,
           },
         ]}
-        onStatusChange={handleStatusChange} 
+        onStatusChange={handleEditStatusChange} 
       />
 
       {applications.length > 0 && (
