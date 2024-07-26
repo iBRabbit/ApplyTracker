@@ -1,13 +1,19 @@
-# MERN Auth Template
+# Apply Tracker
 
-This repository is a template for a full stack application with authentication. It is a good starting point for any full stack application that requires authentication. It uses the following technologies: 
-1. MySQL
-2. Express
-3. React
-4. Node
-5. JWT (JSON Web Tokens)
+Apply Tracker is a web application that allows users to keep track of their job applications. Users can add, edit, and delete job applications, as well as view statistics about their applications.
 
-This template is also providing Navigation Bar with links to Home, Login, and Register pages with conditional rendering based on the user's authentication status. This template is designed by react-bootstrap.
+## Technologies
+- React
+- Node.js
+- Express
+- MySQL
+- JWT
+
+## Features
+- Add, edit, and delete job applications
+- View statistics about job applications
+- User authentication
+- Responsive design
 
 ## Installation
 1. Clone this repository
