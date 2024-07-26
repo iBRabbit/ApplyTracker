@@ -57,12 +57,12 @@ function Index() {
   };
 
   const handleStatusChange = (newStatusFieldList) => setStatusFieldList(newStatusFieldList);
+  
   const handleEditStatusChange = (newEditStatusFieldList) => {
     setEditStatusFieldList(newEditStatusFieldList);
     setStatusOptions(newEditStatusFieldList.map((status) => ({ id: status, name: status })));
 
     try {
-      // alert(editingAppId.id);
       const data = {
         statuses: newEditStatusFieldList,
       }
@@ -222,8 +222,7 @@ function Index() {
             id: "status",
             label: "Status",
             type: "textlist",
-            statusFieldList: statusFieldList,
-            setStatusFieldList: setStatusFieldList,
+            defaultValue: statusFieldList,
             placeholder: "Enter status (i.e : Applied,  HR Interview)",
           },
           {

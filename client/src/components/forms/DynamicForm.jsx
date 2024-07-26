@@ -1,15 +1,28 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap";
-import FieldList from "./FieldList";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-function DynamicForm({ title, listForm, onSubmit, onStatusChange }) {
+const FieldList = ({ fieldList = [], remove }) => (
+  <>
+    {fieldList.map((field, index) => (
+      <div key={index} className="d-flex align-items-center">
+        <span>{field}</span>
+        <Button variant="danger" size="sm" onClick={() => remove(index)}>
+          &times;
+        </Button>
+      </div>
+    ))}
+  </>
+);
+
+function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
   const [statusFieldList, setstatusFieldList] = React.useState([]);
 
   React.useEffect(() => {
     const statusField = listForm.find((form) => form.type === "textlist");
-    if (statusField) {}
-      setstatusFieldList(statusField.defaultValue);
-
+    if (statusField) {
+      setstatusFieldList(statusField.defaultValue || []);
+    }
   }, [listForm]);
 
   const onFormChange = (e) => {
@@ -27,8 +40,9 @@ function DynamicForm({ title, listForm, onSubmit, onStatusChange }) {
       e.preventDefault();
       const newStatusFieldList = [...statusFieldList, e.target.value];
       setstatusFieldList(newStatusFieldList);
-      onStatusChange(newStatusFieldList); 
+      onStatusChange(newStatusFieldList);
       e.target.value = "";
+      
     }
   };
 
@@ -39,6 +53,19 @@ function DynamicForm({ title, listForm, onSubmit, onStatusChange }) {
     onStatusChange(newstatusFieldList);
   };
 
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const newItems = Array.from(statusFieldList);
+    const [movedItem] = newItems.splice(result.source.index, 1);
+    newItems.splice(result.destination.index, 0, movedItem);
+
+    setstatusFieldList(newItems);
+    onStatusChange(newItems);
+  };
+
   return (
     <div>
       <Form onSubmit={onSubmit}>
@@ -47,34 +74,59 @@ function DynamicForm({ title, listForm, onSubmit, onStatusChange }) {
             {form.type !== "hidden" && (
               <Form.Group controlId={form.id} className="p-2">
                 <Form.Label>{form.label}</Form.Label>
-                
+
                 {form.type === "select" ? (
                   <Form.Control as="select" required={form.required} defaultValue={form.defaultValue}>
-                    {/* option must an object contains id and name. */}
                     {form.options.map((option, index) => (
                       <option key={index} value={option.id}>
                         {option.name}
                       </option>
                     ))}
                   </Form.Control>
-                
                 ) : form.type === "textarea" ? (
                   <Form.Control as="textarea" rows={form.rows || 3} placeholder={form.placeholder} required={form.required} defaultValue={form.defaultValue} />
-                )
-                  : form.type === "textlist" ? (
+                ) : form.type === "textlist" ? (
                   <>
-                    <div>
-                      <FieldList fieldList={statusFieldList} remove={removeStatus} />
-                    </div>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                      <Droppable droppableId="droppable" type="group">
+                        {(provided) => (
+                          <div {...provided.droppableProps} ref={provided.innerRef}>
+                            {statusFieldList.map((status, index) => (
+                              <Draggable key={status} draggableId={status} index={index}>
+                                {(provided) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    style={{
+                                      ...provided.draggableProps.style,
+                                      margin: '8px 0',
+                                      padding: '8px',
+                                      backgroundColor: '#fff',
+                                      border: '1px solid #ddd',
+                                      display: 'flex',
+                                      justifyContent: 'space-between',
+                                    }}
+                                  >
+                                    {status}
+                                    <Button variant="danger" size="sm" onClick={() => removeStatus(index)}>
+                                      &times;
+                                    </Button>
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
                     <Form.Control type="text" list="status" placeholder={form.placeholder} required={form.required} onKeyDown={onFormChange} />
                   </>
-                
                 ) : form.type === "checkbox" ? (
                   <Form.Check type="checkbox" label={form.label} required={form.required} />
-                  
                 ) : form.type === "radio" ? (
                   form.options.map((option, index) => <Form.Check key={index} type="radio" label={option} value={option} name={form.id} required={form.required} />)
-                
                 ) : (
                   <Form.Control type={form.type} placeholder={form.placeholder} required={form.required} defaultValue={form.defaultValue} pattern={form.pattern} />
                 )}
