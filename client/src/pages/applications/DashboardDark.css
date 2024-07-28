@@ -1,0 +1,14 @@
+.dashboard-dark {
+    padding: 20px;
+    background-color: #121212;
+    min-height: 100vh;
+  }
+  
+  .card, .table {
+    background-color: #1e1e1e;
+  }
+  
+  .card-title, .card-text, th, td {
+    color: #ffffff;
+  }
+  

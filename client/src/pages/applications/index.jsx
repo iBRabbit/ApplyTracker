@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Container, Row, Col, Card, Table, ProgressBar } from "react-bootstrap";
 import axios from "../../api/axiosConfig";
-
 import DynamicModalForm from "../../components/forms/DynamicModalForm";
 import Loading from "../../components/Loading";
+import { FaClipboardList, FaChartLine, FaCheckCircle } from 'react-icons/fa';
 import { Helmet } from "react-helmet";
+import './DashboardDark.css';
 
 function Index() {
   const [applications, setApplications] = useState([]);
@@ -17,7 +18,10 @@ function Index() {
 
   const [showAppForm, setShowAppForm] = useState(false);
   const handleCloseAppForm = () => setShowAppForm(false);
-  const handleShowAppForm = () => setShowAppForm(true);
+  const handleShowAppForm = () => {
+    setShowAppForm(true);
+    setStatusFieldList([]);
+  }
 
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingAppId, setEditingAppId] = useState({});
@@ -159,6 +163,7 @@ function Index() {
       });
     }
   };
+
   useEffect(() => {
     const fetchApplications = async () => {
       try {
@@ -184,21 +189,98 @@ function Index() {
   }, []);
 
   return (
-    <div className="bodyContent">
-      <h1 className="text-center p-5">My Applications</h1>
-      {loading && <Loading />}
-      {error && <p>Error: {error}</p>}
-      {applications.length === 0 && <p>No applications found</p>}
-
-      <div className="container">
-        <div className="row">
-          <div className="col-md-12">
+    <div className="dashboard-dark">
+      <Helmet>
+        <style>{'body { background-color: #121212; }'}</style>
+      </Helmet>
+      <Container fluid>
+        <Row className="mb-4">
+          <Col>
+            <h1 className="text-center text-white">Dashboard</h1>
+          </Col>
+        </Row>
+        <Row className="mb-4">
+          <Col md={4}>
+            <Card className="text-center text-white bg-dark shadow-sm">
+              <Card.Body>
+                <FaClipboardList size={50} className="mb-3" />
+                <Card.Title>Total Applications</Card.Title>
+                <Card.Text>{applications.length}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card className="text-center text-white bg-dark shadow-sm">
+              <Card.Body>
+                <FaChartLine size={50} className="mb-3" />
+                <Card.Title>Applications In Progress</Card.Title>
+                <Card.Text>1</Card.Text>
+                <ProgressBar now={50} label="50%" variant="info" />
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card className="text-center text-white bg-dark shadow-sm">
+              <Card.Body>
+                <FaCheckCircle size={50} className="mb-3" />
+                <Card.Title>Applications Accepted</Card.Title>
+                <Card.Text>0</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Card className="bg-dark text-white shadow-sm">
+              <Card.Body>
+                <Card.Title>Recent Applications</Card.Title>
+                <Table striped bordered hover responsive variant="dark" className="mt-3">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Company Name</th>
+                      <th>Position</th>
+                      <th>Status</th>
+                      <th>Date Applied</th>
+                      <th>Date Followup</th>
+                      <th>Notes</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {applications.map((application, i) => (
+                      <tr key={application.id}>
+                        <td>{i + 1}</td>
+                        <td>{application.company}</td>
+                        <td>{application.position}</td>
+                        <td>{application.status_name}</td>
+                        <td>{formatDate(application.date_applied)}</td>
+                        <td>{application.date_followup ? formatDate(application.date_followup) : "No Update"}</td>
+                        <td>{application.notes}</td>
+                        <td>
+                          <button className="btn btn-primary me-2" onClick={() => handleShowEditForm(application)}>
+                            Edit
+                          </button>
+                          <button className="btn btn-danger" onClick={() => deleteApplication(application.id)}>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12} className="text-center">
             <button className="btn btn-primary mt-3" onClick={handleShowAppForm}>
               Add Application
             </button>
-          </div>
-        </div>
-      </div>
+          </Col>
+        </Row>
+      </Container>
 
       <DynamicModalForm
         show={showAppForm}
@@ -307,49 +389,6 @@ function Index() {
         ]}
         onStatusChange={handleEditStatusChange} 
       />
-
-      {applications.length > 0 && (
-        <div className="container">
-          <Helmet><title>My Applications</title></Helmet>
-          <div className="row">
-            <Table striped bordered hover responsive className="mt-3" variant="dark">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Company Name</th>
-                  <th>Position</th>
-                  <th>Status</th>
-                  <th>Date Applied</th>
-                  <th>Date Followup</th>
-                  <th>Notes</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {applications.map((application, i) => (
-                  <tr key={application.id}>
-                    <td>{i + 1}</td>
-                    <td>{application.company}</td>
-                    <td>{application.position}</td>
-                    <td>{application.status_name}</td>
-                    <td>{formatDate(application.date_applied)}</td>
-                    <td>{application.date_followup ? formatDate(application.date_followup) : "No Update"}</td>
-                    <td>{application.notes}</td>
-                    <td>
-                      <button className="btn btn-primary me-2" onClick={() => handleShowEditForm(application)}>
-                        Edit
-                      </button>
-                      <button className="btn btn-danger" onClick={() => deleteApplication(application.id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
