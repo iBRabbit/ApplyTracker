@@ -1,4 +1,4 @@
-![WhatsApp Image 2024-07-28 at 20 42 09_9ae321de](https://github.com/user-attachments/assets/b088e1a8-48c4-47fa-8379-9bce578ebb78)![ezgif-6-7e49fa772f](https://github.com/user-attachments/assets/d13c2da1-229d-4603-8423-eeb20f76cc04)# Apply Tracker
+# Apply Tracker
 
 Apply Tracker is a web application that allows users to keep track of their job applications. Users can add, edit, and delete job applications, as well as view statistics about their applications.
 
