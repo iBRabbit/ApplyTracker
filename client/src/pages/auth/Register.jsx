@@ -37,7 +37,7 @@ function Register() {
     }
     
     return (
-        <div>
+        <div className="bodyContent">
             <Helmet><title>Register</title></Helmet>
             <DynamicBox title="Register" onSubmit={handleSubmit} message={message} success = {success} />
         </div>

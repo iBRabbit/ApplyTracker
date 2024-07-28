@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import DynamicBox from "../../components/forms/DynamicAuthForm";
-import { Helmet } from 'react-helmet';
-import axios from 'axios';
+import { Helmet } from 'react-helmet';  
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../helpers/AuthContext';
 import { useEffect } from 'react';
@@ -17,9 +16,8 @@ function Login() {
 
     // Redirect to dashboard if user is already authenticated
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated) 
             navigate('/');
-        }
     }, [isAuthenticated, navigate]);
 
     const handleSubmit = async (e) => {
@@ -43,7 +41,7 @@ function Login() {
     };
 
     return (
-        <div className="loginContainer">
+        <div className="bodyContent">
             <Helmet><title>Login</title></Helmet>
             <DynamicBox title="Login" onSubmit={handleSubmit} message={message} success={success}/>
         </div>

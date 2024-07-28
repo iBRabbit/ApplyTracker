@@ -2,6 +2,7 @@ import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../helpers/AuthContext";
+import styles from "../styles/app.module.css";
 
 const AppNavbar = () => {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
@@ -14,7 +15,7 @@ const AppNavbar = () => {
   };
 
   return (
-    <Navbar bg="primary" variant="dark" expand="lg" className="p-3">
+    <Navbar variant="dark" expand="lg" className="p-3" style={{ backgroundColor: '#121212' }}>
       <Navbar.Brand as={Link} to="/">Apply Tracker</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">

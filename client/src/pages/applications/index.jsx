@@ -184,8 +184,8 @@ function Index() {
   }, []);
 
   return (
-    <div>
-      <h1 className="mt-5">My Applications</h1>
+    <div className="bodyContent">
+      <h1 className="text-center p-5">My Applications</h1>
       {loading && <Loading />}
       {error && <p>Error: {error}</p>}
       {applications.length === 0 && <p>No applications found</p>}
@@ -312,7 +312,7 @@ function Index() {
         <div className="container">
           <Helmet><title>My Applications</title></Helmet>
           <div className="row">
-            <Table striped bordered hover responsive className="mt-3">
+            <Table striped bordered hover responsive className="mt-3" variant="dark">
               <thead>
                 <tr>
                   <th>#</th>

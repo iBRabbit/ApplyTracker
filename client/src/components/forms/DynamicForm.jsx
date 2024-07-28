@@ -29,7 +29,6 @@ function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
       setstatusFieldList(newStatusFieldList);
       onStatusChange(newStatusFieldList);
       e.target.value = "";
-
     }
   };
 
@@ -55,7 +54,7 @@ function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
 
   return (
     <div>
-      <Form onSubmit={onSubmit}>
+      <Form onSubmit={onSubmit} className="dark text-light">
         {listForm.map((form) => (
           <React.Fragment key={form.id}>
             {form.type !== "hidden" && (
@@ -63,7 +62,7 @@ function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
                 <Form.Label>{form.label}</Form.Label>
 
                 {form.type === "select" ? (
-                  <Form.Control as="select" required={form.required} defaultValue={form.defaultValue}>
+                  <Form.Control as="select" required={form.required} defaultValue={form.defaultValue} className="bg-dark text-light">
                     {form.options.map((option, index) => (
                       <option key={index} value={option.id}>
                         {option.name}
@@ -71,7 +70,7 @@ function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
                     ))}
                   </Form.Control>
                 ) : form.type === "textarea" ? (
-                  <Form.Control as="textarea" rows={form.rows || 3} placeholder={form.placeholder} required={form.required} defaultValue={form.defaultValue} />
+                  <Form.Control as="textarea" rows={form.rows || 3} placeholder={form.placeholder} required={form.required} defaultValue={form.defaultValue} className="bg-dark text-light" />
                 ) : form.type === "textlist" ? (
                   <>
                     <DragDropContext onDragEnd={onDragEnd}>
@@ -89,10 +88,11 @@ function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
                                       ...provided.draggableProps.style,
                                       margin: '8px 0',
                                       padding: '8px',
-                                      backgroundColor: '#fff',
-                                      border: '1px solid #ddd',
+                                      backgroundColor: '#212529',
+                                      border: '1px solid #555',
                                       display: 'flex',
                                       justifyContent: 'space-between',
+                                      color: 'white',
                                     }}
                                   >
                                     {status}
@@ -108,14 +108,14 @@ function DynamicForm({ title, listForm = [], onSubmit, onStatusChange }) {
                         )}
                       </Droppable>
                     </DragDropContext>
-                    <Form.Control type="text" list="status" placeholder={form.placeholder} required={form.required} onKeyDown={onFormChange} />
+                    <Form.Control type="text" list="status" placeholder={form.placeholder} required={form.required} onKeyDown={onFormChange} className="bg-dark text-light" />
                   </>
                 ) : form.type === "checkbox" ? (
-                  <Form.Check type="checkbox" label={form.label} required={form.required} />
+                  <Form.Check type="checkbox" label={form.label} required={form.required} className="text-light" />
                 ) : form.type === "radio" ? (
-                  form.options.map((option, index) => <Form.Check key={index} type="radio" label={option} value={option} name={form.id} required={form.required} />)
+                  form.options.map((option, index) => <Form.Check key={index} type="radio" label={option} value={option} name={form.id} required={form.required} className="text-light" />)
                 ) : (
-                  <Form.Control type={form.type} placeholder={form.placeholder} required={form.required} defaultValue={form.defaultValue} pattern={form.pattern} />
+                  <Form.Control type={form.type} placeholder={form.placeholder} required={form.required} defaultValue={form.defaultValue} pattern={form.pattern} className="bg-dark text-light" />
                 )}
               </Form.Group>
             )}
