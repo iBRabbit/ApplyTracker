@@ -86,7 +86,18 @@ function Index() {
 
   const handleEditStatusChange = (newEditStatusFieldList) => {
     setEditStatusFieldList(newEditStatusFieldList);
-    setStatusOptions(newEditStatusFieldList.map((status) => ({ id: status, name: status })));
+
+    // Setting selection biar dropdownnya keupdate tapi apply sama rejectnya ga masuk db
+    let temp = newEditStatusFieldList.map((status) => ({ id: status, name: status }));
+    temp = [{
+      'id': 1,
+      'name': 'Apply'
+    }, ...temp,{
+      'id': 0,
+      'name': 'Rejected'
+    }]
+
+    setStatusOptions(temp);
 
     try {
       const data = {
