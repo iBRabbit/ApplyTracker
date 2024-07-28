@@ -22,7 +22,8 @@ Apply Tracker is a web application that allows users to keep track of their job 
 ![WhatsApp Image 2024-07-28 at 19 45 52_8fafaf83](https://github.com/user-attachments/assets/f4298331-bbf8-4641-ad13-d647cd4e6926)
 ![ezgif-6-7e49fa772f](https://github.com/user-attachments/assets/8d63ff30-b6b5-465c-b5b0-6b6f1455c874)
 ![WhatsApp Image 2024-07-28 at 20 42 09_9ae321de](https://github.com/user-attachments/assets/e7c9070f-f8d0-4f9d-a9a2-2487fa22804c)
-![WhatsApp Image 2024-07-28 at 20 42 09_820dbac8](https://github.com/user-attachments/assets/29e93ba0-5d2b-4aca-9916-2970f60bb403)
+![Uploading WhatsApp Image 2024-07-28 at 20.42.19_dff53341.jpg…]()
+
 
 ## Installation
 1. Clone this repository
