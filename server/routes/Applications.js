@@ -85,7 +85,11 @@ router.post('/ByUid/', validateToken, async (req, res) => {
         try {
             data[i].dataValues.status_name = statuses[0].dataValues.status;
         } catch (error) {
-            data[i].dataValues.status_name = "No Status";
+            if(data[i].dataValues.status)
+                data[i].dataValues.status_name = "Apply";
+            else if (!data[i].dataValues.status)
+                data[i].dataValues.status_name = "Rejected";
+            else data[i].dataValues.status_name = "No Status";
         } 
     }
 
@@ -164,7 +168,11 @@ router.put('/:id', validateToken, async (req, res) => {
         try {
             apps[i].dataValues.status_name = statuses[0].dataValues.status;
         } catch (error) {
-            apps[i].dataValues.status_name = "No Status";
+            if(apps[i].dataValues.status)
+                apps[i].dataValues.status_name = "Apply";
+            else if (!apps[i].dataValues.status)
+                apps[i].dataValues.status_name = "Rejected";
+            else apps[i].dataValues.status_name = "No Status";
         }
     }
 

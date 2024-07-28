@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Table, ProgressBar } from "react-bootstrap";
 import axios from "../../api/axiosConfig";
 import DynamicModalForm from "../../components/forms/DynamicModalForm";
 import Loading from "../../components/Loading";
-import { FaClipboardList, FaChartLine, FaCheckCircle } from 'react-icons/fa';
+import { FaClipboardList, FaChartLine, FaTimesCircle } from 'react-icons/fa';
 import { Helmet } from "react-helmet";
 import './DashboardDark.css';
 
@@ -23,10 +23,21 @@ function Index() {
     setStatusFieldList([]);
   }
 
+  const getProcessedApplicationCount = async (applications) => {
+    return applications.filter((app) => app.status > 1).length;
+  }
+
+  const getRejectedApplicationCount = async (applications) => {
+    return applications.filter((app) => app.status === 0).length;
+  }
+
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingAppId, setEditingAppId] = useState({});
 
   const [statusOptions, setStatusOptions] = useState([]);
+
+  const [applicationInProgress, setApplicationInProgress] = useState(0);
+  const [applicationRejected, setApplicationRejected] = useState(0);
 
   const handleCloseEditForm = () => {
     setShowEditForm(false);
@@ -44,12 +55,22 @@ function Index() {
         },
       });
 
-      const statusData = response.data.map((status) => ({
+      let statusData = response.data.map((status) => ({
         id: status.id, 
         name: status.status 
       }));
-      setStatusOptions(statusData);
+
       setEditStatusFieldList(statusData.map((status) => status.name)); 
+
+      statusData = [{
+        'id': 1,
+        'name': 'Apply'
+      }, ...statusData, {
+        'id': 0,
+        'name': 'Rejected'
+      }]
+
+      setStatusOptions(statusData);
 
     } catch (error) {
       setMessage({
@@ -128,6 +149,9 @@ function Index() {
       })
       .then(() => {
         setApplications(applications.filter((application) => application.id !== id));
+
+        setApplicationInProgress(applicationInProgress - 1);
+        setApplicationRejected(applicationRejected - 1);
       })
       .catch((error) => {
         console.error(error.message);
@@ -155,6 +179,8 @@ function Index() {
       });
 
       setApplications(response.data);
+      setApplicationInProgress(await getProcessedApplicationCount(response.data));
+      setApplicationRejected(await getRejectedApplicationCount(response.data));
       handleCloseEditForm();
     } catch (error) {
       setMessage({
@@ -178,6 +204,9 @@ function Index() {
         );
 
         setApplications(response.data);
+        setApplicationInProgress(await getProcessedApplicationCount(response.data));
+        setApplicationRejected(await getRejectedApplicationCount(response.data));
+
       } catch (error) {
         setError(error.message);
       } finally {
@@ -214,17 +243,17 @@ function Index() {
               <Card.Body>
                 <FaChartLine size={50} className="mb-3" />
                 <Card.Title>Applications In Progress</Card.Title>
-                <Card.Text>1</Card.Text>
-                <ProgressBar now={50} label="50%" variant="info" />
+                <Card.Text>{applicationInProgress} / {applications.length - applicationRejected}</Card.Text>
+                <ProgressBar now={Math.floor(applicationInProgress * 100 / (applications.length - applicationRejected)) } label={`${Math.floor(applicationInProgress * 100 / (applications.length - applicationRejected))}%`} variant="primary" />
               </Card.Body>
             </Card>
           </Col>
           <Col md={4}>
             <Card className="text-center text-white bg-dark shadow-sm">
               <Card.Body>
-                <FaCheckCircle size={50} className="mb-3" />
-                <Card.Title>Applications Accepted</Card.Title>
-                <Card.Text>0</Card.Text>
+                <FaTimesCircle size={50} className="mb-3" />
+                <Card.Title>Applications Rejected</Card.Title>
+                <Card.Text>{applicationRejected}</Card.Text>
               </Card.Body>
             </Card>
           </Col>
